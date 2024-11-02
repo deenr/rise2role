@@ -97,7 +97,7 @@ rise2role/
 - [x] Set up TypeScript configuration
 - [x] Configure ESLint and Prettier
 - [ ] Set up project structure and folders
-- [ ] Add Tailwind CSS for styling
+- [x] Add Tailwind CSS for styling
 
 ### Coming Next
 
