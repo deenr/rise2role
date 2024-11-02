@@ -3,7 +3,7 @@
 ### Navigate Your Career Path with Clarity, Not Chaos
 
 ![Version](https://img.shields.io/github/package-json/v/deenr/rise2role)
-![Build Status](https://img.shields.io/github/workflow/status/deenr/rise2role/CI)
+![Build Status](https://img.shields.io/github/actions/workflow/status/deenr/rise2role/ci.yml?branch=main)
 
 ---
 
