@@ -1,9 +1,8 @@
 
 # Rise2Role
-### Transform Your Job Search Journey, One Application at a Time
+### Navigate Your Career Path with Clarity, Not Chaos
 
 ![Version](https://img.shields.io/github/package-json/v/deenr/rise2role)
-![License](https://img.shields.io/github/license/deenr/rise2role)
 ![Build Status](https://img.shields.io/github/workflow/status/deenr/rise2role/CI)
 
 ---
@@ -52,7 +51,7 @@ Whether you're a recent graduate exploring opportunities or a seasoned professio
    npm run dev
    ```
 
-The app will run on `http://localhost:3000`. Now you're ready to start managing your job applications!
+The app will run on `http://localhost:5173`. Now you're ready to start managing your job applications!
 
 ## 💻 Development
 
