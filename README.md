@@ -84,7 +84,7 @@ rise2role/
 │   ├── utils/        # Utility functions
 │   └── styles/       # Global styles
 ├── public/           # Static assets
-└── tests/           # Test files
+└── __tests__/           # Test files
 ```
 
 ## 🎯 Project Status & Roadmap
@@ -98,6 +98,9 @@ rise2role/
 - [x] Configure ESLint and Prettier
 - [ ] Set up project structure and folders
 - [x] Add Tailwind CSS for styling
+- [x] Set up testing environment (Vitest)
+- [ ] Create basic CI/CD pipeline
+- [ ] Set up error tracking (e.g., Sentry)
 
 ### Coming Next
 
