@@ -12,7 +12,7 @@ This document outlines the development plans for Rise2Role. This is a living doc
 - [ ] Set up project structure and folders
 - [x] Add Tailwind CSS for styling
 - [x] Set up testing environment (Vitest)
-- [ ] Create basic CI/CD pipeline
+- [x] Create basic CI/CD pipeline
 - [ ] Set up error tracking (e.g., Sentry)
 
 ## Upcoming Phases
