@@ -4,8 +4,8 @@ This document outlines the development plans for Rise2Role. This is a living doc
 
 ## Current Phase
 ### 🛠️ Phase 0: Project Setup & Infrastructure
-- [ ] Initialize React project with Vite
-- [ ] Set up TypeScript configuration
+- [x] Initialize React project with Vite
+- [x] Set up TypeScript configuration
 - [ ] Configure ESLint and Prettier
 - [ ] Set up project structure and folders
 - [ ] Add Tailwind CSS for styling
