@@ -3,10 +3,12 @@
 This document outlines the development plans for Rise2Role. This is a living document that will be updated as the project evolves.
 
 ## Current Phase
+
 ### 🛠️ Phase 0: Project Setup & Infrastructure
+
 - [x] Initialize React project with Vite
 - [x] Set up TypeScript configuration
-- [ ] Configure ESLint and Prettier
+- [x] Configure ESLint and Prettier
 - [ ] Set up project structure and folders
 - [ ] Add Tailwind CSS for styling
 - [ ] Set up testing environment (Jest/Vitest)
@@ -15,8 +17,8 @@ This document outlines the development plans for Rise2Role. This is a living doc
 
 ## Upcoming Phases
 
-
 ### 🚀 Phase 1: MVP - Basic Kanban Board
+
 - [ ] Implement core Kanban board layout
   - [ ] Create column components
   - [ ] Add job card components
@@ -33,6 +35,7 @@ This document outlines the development plans for Rise2Role. This is a living doc
 - [ ] Ensure mobile responsiveness
 
 ### 🔗 Phase 2: Shareable Boards
+
 - [ ] Set up backend infrastructure
   - [ ] Create Express/Node.js server
   - [ ] Set up MongoDB database
@@ -47,6 +50,7 @@ This document outlines the development plans for Rise2Role. This is a living doc
   - [ ] Handle offline/online states
 
 ### 👤 Phase 3: User Authentication
+
 - [ ] Set up authentication system
   - [ ] Implement user registration
   - [ ] Add login functionality
@@ -57,6 +61,7 @@ This document outlines the development plans for Rise2Role. This is a living doc
 - [ ] Add multiple board support per user
 
 ### 📅 Phase 4: Calendar Integration
+
 - [ ] Create calendar view component
 - [ ] Add meeting/interview scheduling
   - [ ] Create event creation interface
@@ -68,6 +73,7 @@ This document outlines the development plans for Rise2Role. This is a living doc
 - [ ] Create timeline view of applications
 
 ### 🎯 Future Enhancements
+
 - [ ] Analytics dashboard
   - [ ] Application status metrics
   - [ ] Success rate tracking
@@ -78,7 +84,9 @@ This document outlines the development plans for Rise2Role. This is a living doc
 - [ ] Email integration for automated follow-ups
 
 ## Completed Phases
+
 - None yet
 
 ## Version History
+
 - v0.1.0 (Planned) - Initial project setup

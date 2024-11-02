@@ -1,5 +1,5 @@
-
 # Rise2Role
+
 ### Navigate Your Career Path with Clarity, Not Chaos
 
 ![Version](https://img.shields.io/github/package-json/v/deenr/rise2role)
@@ -12,6 +12,7 @@
 In today's competitive job market, staying organized is key to landing your dream role. **Rise2Role** transforms your job search from a scattered process into a streamlined journey. With our intuitive Kanban board interface, you can visualize your entire job search pipeline at a glance.
 
 **Why Rise2Role?**
+
 - 📊 **Visual Progress:** Track your applications across different stages with our drag-and-drop Kanban board
 - 🔄 **Seamless Sync:** Your data persists locally, with cloud sync coming soon
 - 📱 **Responsive Design:** Manage your job search from any device
@@ -56,19 +57,23 @@ The app will run on `http://localhost:5173`. Now you're ready to start managing 
 ## 💻 Development
 
 ### Environment Setup
+
 Create a `.env` file in the root directory:
+
 ```bash
 VITE_APP_TITLE=Rise2Role
 # Add other environment variables as needed
 ```
 
 ### Available Scripts
+
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm run test` - Run tests
 - `npm run lint` - Run linting
 
 ### Project Structure
+
 ```bash
 rise2role/
 ├── src/
@@ -87,13 +92,15 @@ rise2role/
 > **Current Phase: 0 - Project Setup & Infrastructure**
 
 ### Current Focus
+
 - [x] Initialize React project with Vite
 - [x] Set up TypeScript configuration
-- [ ] Configure ESLint and Prettier
+- [x] Configure ESLint and Prettier
 - [ ] Set up project structure and folders
 - [ ] Add Tailwind CSS for styling
 
 ### Coming Next
+
 - Basic Kanban board implementation
 - Drag-and-drop functionality
 - Local storage integration
@@ -131,6 +138,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## 🙏 Acknowledgments
 
 Built with appreciation for:
+
 - [React](https://reactjs.org) - The library that makes it all possible
 - [Tailwind CSS](https://tailwindcss.com) - For making styling a breeze
 - [Lucide Icons](https://lucide.dev) - For the beautiful icons
