@@ -1,5 +1,11 @@
+import { BanbanBoard } from './components/BanbanBoard';
+
 function App() {
-  return <>Test</>;
+  return (
+    <>
+      <BanbanBoard />
+    </>
+  );
 }
 
 export default App;
