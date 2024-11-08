@@ -21,9 +21,10 @@ This document outlines the development plans for Rise2Role. This is a living doc
 
 - [ ] Implement core Kanban board layout
   - [x] Create column components
-  - [ ] Add job card components
+  - [x] Add job card components
   - [ ] Implement drag-and-drop functionality
 - [ ] Add job management features
+  - [x] Create new job dialog
   - [ ] Create new job entries
   - [ ] Edit job details
   - [ ] Delete job entries

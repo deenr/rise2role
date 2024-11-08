@@ -1,8 +1,9 @@
-import { Loader, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import { JobApplicationDialog } from './JobApplicationDialog';
 import { Badge } from './ui/badge';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 
-type BanbanCategory = 'interested' | 'applied' | 'interview' | 'decision' | 'accepted' | 'denied';
+export type BanbanCategory = 'interested' | 'applied' | 'interview' | 'decision' | 'accepted' | 'denied';
 
 interface JobApplication {
   role: string;
@@ -19,28 +20,28 @@ export function BanbanBoard() {
 
   return (
     <div className="grid grid-cols-4 gap-4 p-6">
-      <BanbanColumn title="Interested">
+      <BanbanColumn title="Interested" category="interested">
         {jobs
           .filter((job) => job.category === 'interested')
           .map((job, index) => (
             <BanbanCard key={index} {...job} color="gray" />
           ))}
       </BanbanColumn>
-      <BanbanColumn title="Applied">
+      <BanbanColumn title="Applied" category="applied">
         {jobs
           .filter((job) => job.category === 'applied')
           .map((job, index) => (
             <BanbanCard key={index} {...job} color="blue" />
           ))}
       </BanbanColumn>
-      <BanbanColumn title="Interviews">
+      <BanbanColumn title="Interviews" category="interview">
         {jobs
           .filter((job) => job.category === 'interview')
           .map((job, index) => (
             <BanbanCard key={index} {...job} color="fuchsia" />
           ))}
       </BanbanColumn>
-      <BanbanColumn title="Decision">
+      <BanbanColumn title="Decision" category="decision">
         {jobs
           .filter((job) => job.category === 'decision' || job.category === 'denied' || job.category === 'accepted')
           .map((job, index) => (
@@ -51,15 +52,17 @@ export function BanbanBoard() {
   );
 }
 
-function BanbanColumn({ title, children }: { title: string; children: JSX.Element[] }) {
+function BanbanColumn({ title, category, children, className }: { title: string; category: BanbanCategory; children: JSX.Element[]; className?: string }) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className={`flex flex-col gap-4 ${className}`}>
       <header className="relative flex h-10 flex-row items-center rounded-lg border bg-card px-3">
         <span className="text-card-foreground">{title}</span>
         {children.length > 0 && <Badge className="ml-2 bg-indigo-500 px-1.5 hover:bg-indigo-500">{children.length}</Badge>}
-        <Plus className="absolute right-0 top-1/2 aspect-square h-10 w-10 -translate-y-1/2 cursor-pointer p-2.5 text-muted-foreground hover:text-card-foreground" />
+        <JobApplicationDialog category={category}>
+          <Plus className="absolute right-0 top-1/2 aspect-square h-10 w-10 -translate-y-1/2 cursor-pointer p-2.5 text-muted-foreground hover:text-card-foreground" />
+        </JobApplicationDialog>
       </header>
-      <section className="flex flex-col gap-2 rounded-lg border bg-muted p-2">{children}</section>
+      <section className="flex h-full flex-col gap-2 rounded-lg border bg-muted p-2">{children}</section>
     </div>
   );
 }
@@ -71,8 +74,8 @@ function BanbanCard({
   skills,
   color = 'red',
   category,
-  status,
-  percentage
+  status
+  // percentage
 }: {
   role: string;
   company: string[];
@@ -84,7 +87,7 @@ function BanbanCard({
   percentage?: number;
 }) {
   const textColors = {
-    gray: 'text-gray-600',
+    gray: 'text-gray-800',
     blue: 'text-blue-600',
     fuchsia: 'text-fuchsia-600',
     red: 'text-red-600',
@@ -101,16 +104,17 @@ function BanbanCard({
     amber: 'bg-amber-500 hover:bg-amber-500'
   };
 
-  const getPercentageBadgeColor = (): string => {
-    if (!percentage) return backgroundColors['gray'];
-    if (percentage >= 80) {
-      return backgroundColors['green'];
-    } else if (percentage >= 50 && percentage < 80) {
-      return backgroundColors['amber'];
-    } else {
-      return backgroundColors['red'];
-    }
-  };
+  // const getPercentageBadgeColor = (): string => {
+  //   if (!percentage) return backgroundColors['gray'];
+  //   if (percentage >= 80) {
+  //     return backgroundColors['green'];
+  //   } else if (percentage >= 50 && percentage < 80) {
+  //     return backgroundColors['amber'];
+  //   } else {
+  //     return backgroundColors['red'];
+  //   }
+  // };
+
   const getHeaderBadgeColor = (): string => {
     switch (category) {
       case 'accepted':
@@ -134,12 +138,12 @@ function BanbanCard({
       <CardContent>
         <CardDescription>{location.join(' / ')}</CardDescription>
         <CardDescription>
-          <span className={textColors[color]}>{skills[0]}</span> &#x2022; {skills.slice(1, 3).join(' \u2022 ')}
+          <span className={`${textColors[color]} font-medium`}>{skills[0]}</span> &#x2022; {skills.slice(1, 3).join(' \u2022 ')}
         </CardDescription>
       </CardContent>
-      <CardFooter className="flex justify-end border-t pt-3">
+      {/* <CardFooter className="flex justify-end border-t pt-3">
         <Badge className={getPercentageBadgeColor()}>{percentage ? `${percentage}%` : <Loader className="h-4 animate-spin" />}</Badge>
-      </CardFooter>
+      </CardFooter> */}
     </Card>
   );
 }
