@@ -1,9 +1,9 @@
-import { BanbanBoard } from './components/BanbanBoard';
+import { KanbanBoard } from './components/KanbanBoard';
 
 function App() {
   return (
     <>
-      <BanbanBoard />
+      <KanbanBoard />
     </>
   );
 }

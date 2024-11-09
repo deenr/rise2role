@@ -1,10 +1,10 @@
 import { cn } from '@/lib/utils';
+import { KanbanCategory } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { BanbanCategory } from './BanbanBoard';
 import { Button } from './ui/button';
 import { Checkbox } from './ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
@@ -41,7 +41,7 @@ const WORK_MODELS = ['On-site', 'Remote', 'Hybrid'] as const;
 type WorkModel = (typeof WORK_MODELS)[number];
 
 interface JobApplicationDialogProps {
-  category: BanbanCategory;
+  category: KanbanCategory;
   children: JSX.Element;
 }
 
@@ -52,7 +52,7 @@ export function JobApplicationDialog({ category, children }: JobApplicationDialo
 
   React.useEffect(() => {
     form.setValue('category', category);
-  }, [category, form]);
+  }, [category]);
 
   const handleWorkModelChange = React.useCallback(
     (model: WorkModel, checked: boolean) => {

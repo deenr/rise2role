@@ -89,24 +89,23 @@ rise2role/
 
 ## 🎯 Project Status & Roadmap
 
-> **Current Phase: 0 - Project Setup & Infrastructure**
+> **Current Phase: 1 MVP - Basic Kanban Board**
 
-### Current Focus
-
-- [x] Initialize React project with Vite
-- [x] Set up TypeScript configuration
-- [x] Configure ESLint and Prettier
-- [ ] Set up project structure and folders
-- [x] Add Tailwind CSS for styling
-- [x] Set up testing environment (Vitest)
-- [x] Create basic CI/CD pipeline
-- [ ] Set up error tracking (e.g., Sentry)
-
-### Coming Next
-
-- Basic Kanban board implementation
-- Drag-and-drop functionality
-- Local storage integration
+- [x] Implement core Kanban board layout
+  - [x] Create column components
+  - [x] Add job card components
+  - [x] Implement drag-and-drop functionality
+- [ ] Add job management features
+  - [x] Create new job dialog
+  - [ ] Create new job entries
+  - [ ] Edit job details
+  - [ ] Delete job entries
+- [ ] Implement LocalStorage
+  - [ ] Save board state
+  - [ ] Load saved data on startup
+  - [ ] Handle data persistence
+- [ ] Add basic error handling
+- [ ] Ensure mobile responsiveness
 
 📋 View our complete roadmap in [ROADMAP.md](ROADMAP.md)
 

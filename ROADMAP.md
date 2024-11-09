@@ -19,10 +19,10 @@ This document outlines the development plans for Rise2Role. This is a living doc
 
 ### 🚀 Phase 1: MVP - Basic Kanban Board
 
-- [ ] Implement core Kanban board layout
+- [x] Implement core Kanban board layout
   - [x] Create column components
   - [x] Add job card components
-  - [ ] Implement drag-and-drop functionality
+  - [x] Implement drag-and-drop functionality
 - [ ] Add job management features
   - [x] Create new job dialog
   - [ ] Create new job entries
