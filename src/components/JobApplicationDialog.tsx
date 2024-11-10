@@ -1,9 +1,11 @@
 import { cn } from '@/lib/utils';
-import { KanbanCategory } from '@/types';
+import { JobApplication, KanbanCategory, KanbanDecisionStatus } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
 import * as React from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { Button } from './ui/button';
 import { Checkbox } from './ui/checkbox';
@@ -27,11 +29,22 @@ const DECISION_STATUSES = {
 
 const jobApplicationSchema = z.object({
   role: z.string().min(1, 'Job title is required'),
-  company: z.array(z.string()),
-  location: z.array(z.string()),
+  company: z.object({
+    name: z.string().min(1, 'Company name is required'),
+    size: z.string(),
+    industry: z.string()
+  }),
+  location: z.string().min(1, 'Location is required'),
+  workModels: z.array(z.string()),
   skills: z.array(z.string()).min(1, 'At least one skill is required').max(3, 'Maximum 3 skills are allowed'),
-  category: z.enum(['interested', 'applied', 'interview', 'decision', 'accepted', 'denied']),
-  status: z.string().optional(),
+  category: z.nativeEnum(KanbanCategory),
+  decisionStatus: z.nativeEnum(KanbanDecisionStatus).optional(),
+  interviewStatus: z
+    .object({
+      round: z.string(),
+      type: z.string()
+    })
+    .optional(),
   percentage: z.number().min(0).max(100).optional()
 });
 
@@ -41,34 +54,79 @@ const WORK_MODELS = ['On-site', 'Remote', 'Hybrid'] as const;
 type WorkModel = (typeof WORK_MODELS)[number];
 
 interface JobApplicationDialogProps {
-  category: KanbanCategory;
+  category?: KanbanCategory;
   children: JSX.Element;
+  onClose: (job: JobApplication) => void;
 }
 
-export function JobApplicationDialog({ category, children }: JobApplicationDialogProps) {
+export function JobApplicationDialog({ category, children, onClose }: JobApplicationDialogProps) {
+  const [open, setOpen] = useState(false);
+
   const form = useForm<JobApplicationFormData>({
-    resolver: zodResolver(jobApplicationSchema)
+    resolver: zodResolver(jobApplicationSchema),
+    defaultValues: {
+      role: '',
+      company: {
+        name: '',
+        size: '',
+        industry: ''
+      },
+      location: '',
+      interviewStatus: {
+        round: '',
+        type: ''
+      },
+      workModels: [],
+      skills: []
+    }
   });
 
   React.useEffect(() => {
-    form.setValue('category', category);
+    if (category) form.setValue('category', category);
   }, [category]);
 
   const handleWorkModelChange = React.useCallback(
     (model: WorkModel, checked: boolean) => {
-      const currentLocations = form.getValues('location');
-      form.setValue('location', checked ? [...currentLocations, model] : currentLocations.filter((loc) => loc !== model));
+      const currentLocations = form.getValues('workModels');
+      form.setValue('workModels', checked ? [...currentLocations, model] : currentLocations.filter((loc) => loc !== model));
     },
     [form]
   );
 
   const onSubmit = (data: JobApplicationFormData) => {
-    console.log(data);
-    // TODO: Handle form submission
+    const { role, company, skills, location, workModels, category, decisionStatus, interviewStatus, percentage } = data;
+    const { name, size, industry } = company;
+
+    const newJobApplication: JobApplication = {
+      id: uuidv4(),
+      role,
+      company: {
+        name,
+        size,
+        industry
+      },
+      location,
+      onSite: workModels.includes('On-site'),
+      hybrid: workModels.includes('Hybrid'),
+      remote: workModels.includes('Remote'),
+      status: undefined,
+      skills,
+      category,
+      percentage
+    };
+
+    form.reset();
+
+    // TODO
+    // if (category === KanbanCategory.INTERVIEW && interviewStatus) newJobApplication['status'] = { round: Number(interviewStatus.round), description: interviewStatus.type };
+    // if (category === KanbanCategory.DECISION) newJobApplication['status'] = decisionStatus;
+
+    onClose(newJobApplication);
+    setOpen(false);
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[800px]">
         <Form {...form}>
@@ -89,7 +147,6 @@ export function JobApplicationDialog({ category, children }: JobApplicationDialo
                       <Select
                         onValueChange={(value) => {
                           field.onChange(value);
-                          form.setValue('status', undefined);
                         }}
                         defaultValue={field.value}
                       >
@@ -117,17 +174,23 @@ export function JobApplicationDialog({ category, children }: JobApplicationDialo
                 {form.watch('category') === 'decision' && (
                   <FormField
                     control={form.control}
-                    name="status"
+                    name="decisionStatus"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Status</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select onValueChange={(value) => (value === 'null' ? field.onChange('') : field.onChange(value))} value={field.value}>
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select status" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
+                            <SelectItem value="null">
+                              <div className="flex flex-row items-center gap-2">
+                                <div className={`h-1.5 w-1.5 rounded-full`} />
+                                None
+                              </div>
+                            </SelectItem>
                             {Object.entries(DECISION_STATUSES).map(([value, { label, backgroundColor }]) => (
                               <SelectItem key={value} value={value}>
                                 <div className="flex flex-row items-center gap-2">
@@ -149,23 +212,12 @@ export function JobApplicationDialog({ category, children }: JobApplicationDialo
                     <div className="grid grid-cols-3 gap-4 [&>*:first-child]:col-span-1 [&>*:last-child]:col-span-2">
                       <FormField
                         control={form.control}
-                        name="status"
+                        name="interviewStatus.round"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Round</FormLabel>
                             <FormControl>
-                              <Input
-                                type="number"
-                                min="1"
-                                placeholder="1"
-                                value={field.value?.split(' ')[1]?.split('(')[0] || ''}
-                                onChange={(e) => {
-                                  const round = e.target.value;
-                                  const currentValue = field.value || '';
-                                  const name = currentValue.match(/\((.*?)\)/)?.[1] || '';
-                                  field.onChange(`Round ${round}${name ? ` (${name})` : ''}`);
-                                }}
-                              />
+                              <Input type="number" min="1" placeholder="1" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -173,21 +225,12 @@ export function JobApplicationDialog({ category, children }: JobApplicationDialo
                       />
                       <FormField
                         control={form.control}
-                        name="status"
+                        name="interviewStatus.type"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Interview Type</FormLabel>
                             <FormControl>
-                              <Input
-                                placeholder="e.g. Technical, Introduction"
-                                value={field.value?.match(/\((.*?)\)/)?.[1] || ''}
-                                onChange={(e) => {
-                                  const name = e.target.value;
-                                  const currentValue = field.value || '';
-                                  const round = currentValue.split(' ')[1]?.split('(')[0] || '';
-                                  field.onChange(`Round ${round}${name ? ` (${name})` : ''}`);
-                                }}
-                              />
+                              <Input placeholder="e.g. Technical, Introduction" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -215,7 +258,7 @@ export function JobApplicationDialog({ category, children }: JobApplicationDialo
 
                 <FormField
                   control={form.control}
-                  name="company.0"
+                  name="company.name"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Company name</FormLabel>
@@ -231,7 +274,7 @@ export function JobApplicationDialog({ category, children }: JobApplicationDialo
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField
                   control={form.control}
-                  name="company.1"
+                  name="company.size"
                   render={({ field, fieldState }) => (
                     <FormItem>
                       <FormLabel>Company size</FormLabel>
@@ -244,7 +287,7 @@ export function JobApplicationDialog({ category, children }: JobApplicationDialo
                 />
                 <FormField
                   control={form.control}
-                  name="company.2"
+                  name="company.industry"
                   render={({ field, fieldState }) => (
                     <FormItem>
                       <FormLabel>Industry</FormLabel>
@@ -260,7 +303,7 @@ export function JobApplicationDialog({ category, children }: JobApplicationDialo
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField
                   control={form.control}
-                  name="location.0"
+                  name="location"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Location</FormLabel>
@@ -276,7 +319,7 @@ export function JobApplicationDialog({ category, children }: JobApplicationDialo
                   <FormLabel>Work model</FormLabel>
                   <FormField
                     control={form.control}
-                    name="location"
+                    name="workModels"
                     render={({ field }) => (
                       <FormItem>
                         <div className="flex h-9 items-center gap-4">

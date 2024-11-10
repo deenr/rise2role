@@ -7,8 +7,8 @@ import { CSS } from '@dnd-kit/utilities';
 export function KanbanBoardCard({
   id,
   role,
-  company,
-  location,
+  companyInformation,
+  locationInformation,
   skills,
   color = 'red',
   category,
@@ -17,12 +17,12 @@ export function KanbanBoardCard({
 }: {
   id: string;
   role: string;
-  company: string[];
-  location: string[];
+  companyInformation: string;
+  locationInformation: string;
   skills: string[];
   color: 'gray' | 'blue' | 'fuchsia' | 'red' | 'green' | 'amber';
   category?: KanbanCategory;
-  status?: string | KanbanDecisionStatus;
+  status?: string;
   percentage?: number;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
@@ -80,13 +80,11 @@ export function KanbanBoardCard({
         <div className={`${isDragging ? 'invisible' : 'visible'}`}>
           <CardHeader>
             {status && <Badge className={`w-fit ${getHeaderBadgeColor()}`}>{status}</Badge>}
-            <CardTitle>
-              {id} {role}
-            </CardTitle>
-            <CardDescription>{company.join(' / ')}</CardDescription>
+            <CardTitle>{role}</CardTitle>
+            <CardDescription>{companyInformation}</CardDescription>
           </CardHeader>
           <CardContent>
-            <CardDescription>{location.join(' / ')}</CardDescription>
+            <CardDescription>{locationInformation}</CardDescription>
             <CardDescription>
               <span className={`${textColors[color]} font-medium`}>{skills[0]}</span> &#x2022; {skills.slice(1, 3).join(' \u2022 ')}
             </CardDescription>

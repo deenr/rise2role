@@ -1,5 +1,4 @@
-import { INITIAL_JOBS } from '@/data';
-import { KanbanBoardSections, KanbanCategory } from '@/types';
+import { JobApplication, KanbanBoardSections, KanbanCategory } from '@/types';
 import { initializeBoard } from '@/utils/kanban';
 import {
   closestCorners,
@@ -16,15 +15,19 @@ import {
   useSensors
 } from '@dnd-kit/core';
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { KanbanBoardCard } from './KanbanBoardCard';
 import { KanbanBoardColumn } from './KanbanBoardColumn';
 
 export function KanbanBoard() {
-  const jobs = INITIAL_JOBS;
+  const [jobs, setJobs] = useState<JobApplication[]>([]);
   const [kanbanBoardSections, setKanbanBoardSections] = useState<KanbanBoardSections>(initializeBoard(jobs));
 
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setKanbanBoardSections(initializeBoard(jobs));
+  }, [jobs]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -85,6 +88,13 @@ export function KanbanBoard() {
     const activeIndex = kanbanBoardSections[activeContainer].findIndex((task) => task.id === active.id);
     const overIndex = kanbanBoardSections[overContainer].findIndex((task) => task.id === over?.id);
 
+    setKanbanBoardSections((prevBoardSections) => {
+      prevBoardSections[activeContainer].map((task) => (task.id === active.id ? { ...task, category: overContainer } : task));
+
+      return prevBoardSections;
+    });
+    setJobs((prevJobs) => prevJobs.map((task) => (task.id === active.id ? { ...task, category: overContainer } : task)));
+
     if (activeIndex !== overIndex) {
       setKanbanBoardSections((prevBoardSections) => ({
         ...prevBoardSections,
@@ -105,9 +115,33 @@ export function KanbanBoard() {
     <div className="grid grid-cols-4 gap-4 p-6">
       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
         {Object.keys(kanbanBoardSections).map((category) => (
-          <KanbanBoardColumn id={category} title={category} category={category as KanbanCategory} color="gray" jobs={kanbanBoardSections[category as KanbanCategory]}></KanbanBoardColumn>
+          <KanbanBoardColumn
+            id={category}
+            key={category}
+            title={category}
+            category={category as KanbanCategory}
+            color="gray"
+            jobs={kanbanBoardSections[category as KanbanCategory]}
+            onJobAdd={(job) => setJobs((prevJobs) => [...prevJobs, job])}
+          ></KanbanBoardColumn>
         ))}
-        <DragOverlay dropAnimation={dropAnimation}>{activeJob ? <KanbanBoardCard {...activeJob} color="gray" /> : null}</DragOverlay>
+        <DragOverlay dropAnimation={dropAnimation}>
+          {activeJob ? (
+            <KanbanBoardCard
+              {...activeJob}
+              companyInformation={`${activeJob.company.name} / ${activeJob.company.size} / ${activeJob.company.industry}`}
+              locationInformation={[activeJob?.onSite && 'On-site', activeJob?.hybrid && 'Hybrid', activeJob?.remote && 'Remote'].filter(Boolean).join(' / ')}
+              status={
+                activeJob.category === KanbanCategory.INTERVIEW && 'status' in activeJob && typeof activeJob.status === 'object'
+                  ? `Round ${activeJob.status.round} ${activeJob.status.description ? `(${activeJob.status.description})` : ''}`
+                  : activeJob.category === KanbanCategory.DECISION && 'status' in activeJob && typeof activeJob.status === 'string'
+                    ? activeJob.status
+                    : ''
+              }
+              color="gray"
+            />
+          ) : null}
+        </DragOverlay>
       </DndContext>
     </div>
   );
