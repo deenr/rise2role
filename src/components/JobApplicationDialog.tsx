@@ -15,16 +15,16 @@ import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
 const KANBAN_CATEGORIES = {
-  interested: { label: 'Interested', backgroundColor: 'bg-gray-500' },
-  applied: { label: 'Applied', backgroundColor: 'bg-blue-500' },
-  interview: { label: 'Interview', backgroundColor: 'bg-fuchsia-500' },
-  decision: { label: 'Decision', backgroundColor: 'bg-amber-500' }
+  [KanbanCategory.INTERESTED]: { label: 'Interested', backgroundColor: 'bg-gray-500' },
+  [KanbanCategory.APPLIED]: { label: 'Applied', backgroundColor: 'bg-blue-500' },
+  [KanbanCategory.INTERVIEW]: { label: 'Interview', backgroundColor: 'bg-fuchsia-500' },
+  [KanbanCategory.DECISION]: { label: 'Decision', backgroundColor: 'bg-amber-500' }
 } as const;
 
 const DECISION_STATUSES = {
-  decision: { label: 'Received Offer', backgroundColor: 'bg-amber-500' },
-  accepted: { label: 'Accepted', backgroundColor: 'bg-green-500' },
-  denied: { label: 'Denied', backgroundColor: 'bg-red-500' }
+  [KanbanDecisionStatus.OFFER]: { label: 'Received Offer', backgroundColor: 'bg-amber-500' },
+  [KanbanDecisionStatus.ACCEPTED]: { label: 'Accepted', backgroundColor: 'bg-green-500' },
+  [KanbanDecisionStatus.DENIED]: { label: 'Denied', backgroundColor: 'bg-red-500' }
 };
 
 const jobApplicationSchema = z.object({
@@ -101,8 +101,7 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
   );
 
   const onSubmit = (data: JobApplicationFormData) => {
-    // const { role, company, skills, location, workModels, category, decisionStatus, interviewStatus, percentage } = data;
-    const { role, company, skills, location, workModels, category, percentage } = data;
+    const { role, company, skills, location, workModels, category, decisionStatus, interviewStatus, percentage } = data;
     const { name, size, industry } = company;
 
     const newJobApplication: JobApplication = {
@@ -125,9 +124,10 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
 
     form.reset();
 
-    // TODO
-    // if (category === KanbanCategory.INTERVIEW && interviewStatus) newJobApplication['status'] = { round: Number(interviewStatus.round), description: interviewStatus.type };
-    // if (category === KanbanCategory.DECISION) newJobApplication['status'] = decisionStatus;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (category === KanbanCategory.INTERVIEW && interviewStatus) (newJobApplication as any)['status'] = { round: Number(interviewStatus.round), description: interviewStatus.type };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (category === KanbanCategory.DECISION) (newJobApplication as any)['status'] = decisionStatus;
 
     onClose(newJobApplication);
     setOpen(false);
@@ -136,7 +136,7 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[800px]">
+      <DialogContent className="max-h-dvh overflow-y-scroll sm:max-w-[800px]">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <DialogHeader>
@@ -179,7 +179,7 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
                   )}
                 />
 
-                {form.watch('category') === 'decision' && (
+                {form.watch('category') === KanbanCategory.DECISION && (
                   <FormField
                     control={form.control}
                     name="decisionStatus"
@@ -215,7 +215,7 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
                   />
                 )}
 
-                {form.watch('category') === 'interview' && (
+                {form.watch('category') === KanbanCategory.INTERVIEW && (
                   <div className="space-y-4">
                     <div className="grid grid-cols-3 gap-4 [&>*:first-child]:col-span-1 [&>*:last-child]:col-span-2">
                       <FormField
@@ -411,7 +411,7 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
               </div>
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="mt-6 md:mt-0">
               <Button type="submit">{job ? 'Edit' : 'Add'} application</Button>
             </DialogFooter>
           </form>

@@ -90,14 +90,13 @@ export function KanbanBoard() {
   const activeJob = jobs.find(({ id }) => id === activeJobId);
 
   return (
-    <div className="grid grid-cols-4 gap-4 p-6">
+    <div className="grid h-dvh grid-cols-[auto,auto,auto,auto] gap-4 p-6">
       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
         {Object.keys(kanbanBoardSections).map((category) => (
           <KanbanBoardColumn
-            id={category}
+            className="min-w-64"
+            id={category as KanbanCategory}
             key={category}
-            title={category}
-            category={category as KanbanCategory}
             color="gray"
             jobs={kanbanBoardSections[category as KanbanCategory]}
             onJobAdd={(job) => setJobs((prevJobs) => [...prevJobs, job])}

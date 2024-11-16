@@ -1,16 +1,14 @@
-export const KanbanCategories = ['interested', 'applied', 'interview', 'decision', 'accepted', 'denied'] as const;
-
 export enum KanbanCategory {
-  INTERESTED = 'interested',
-  APPLIED = 'applied',
-  INTERVIEW = 'interview',
-  DECISION = 'decision'
+  INTERESTED = 'INTERESTED',
+  APPLIED = 'APPLIED',
+  INTERVIEW = 'INTERVIEW',
+  DECISION = 'DECISION'
 }
 
 export enum KanbanDecisionStatus {
-  DENIED = 'denied',
-  ACCEPTED = 'accepted',
-  OFFER = 'offer'
+  DENIED = 'DENIED',
+  ACCEPTED = 'ACCEPTED',
+  OFFER = 'OFFER'
 }
 
 export type KanbanBoardSections = Record<KanbanCategory, JobApplication[]>;

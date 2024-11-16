@@ -98,14 +98,14 @@ rise2role/
 - [ ] Add job management features
   - [x] Create new job dialog
   - [x] Create new job entries
-  - [ ] Edit job details
+  - [x] Edit job details
   - [ ] Delete job entries
-- [ ] Implement LocalStorage
-  - [ ] Save board state
-  - [ ] Load saved data on startup
+- [x] Implement LocalStorage
+  - [x] Save board state
+  - [x] Load saved data on startup
   - [ ] Handle data persistence
 - [ ] Add basic error handling
-- [ ] Ensure mobile responsiveness
+- [x] Ensure mobile responsiveness
 
 📋 View our complete roadmap in [ROADMAP.md](ROADMAP.md)
 

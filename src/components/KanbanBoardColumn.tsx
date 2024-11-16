@@ -8,17 +8,13 @@ import { Badge } from './ui/badge';
 
 export function KanbanBoardColumn({
   id,
-  title,
-  category,
   jobs,
   color = 'gray',
   className,
   onJobAdd,
   onJobEdit
 }: {
-  id: string;
-  title: string;
-  category: KanbanCategory;
+  id: KanbanCategory;
   jobs: JobApplication[];
   color: 'gray' | 'blue' | 'fuchsia' | 'amber';
   className?: string;
@@ -29,12 +25,19 @@ export function KanbanBoardColumn({
     id
   });
 
+  const KANBAN_CATEGORIES = {
+    [KanbanCategory.INTERESTED]: { label: 'Interested', backgroundColor: 'bg-gray-500' },
+    [KanbanCategory.APPLIED]: { label: 'Applied', backgroundColor: 'bg-blue-500' },
+    [KanbanCategory.INTERVIEW]: { label: 'Interview', backgroundColor: 'bg-fuchsia-500' },
+    [KanbanCategory.DECISION]: { label: 'Decision', backgroundColor: 'bg-amber-500' }
+  } as const;
+
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
       <header className="relative flex min-h-10 flex-row items-center rounded-lg border bg-card px-3">
-        <span className="text-card-foreground">{title}</span>
+        <span className="text-card-foreground">{KANBAN_CATEGORIES[id].label}</span>
         {jobs.length > 0 && <Badge className="ml-2 bg-indigo-500 px-1.5 hover:bg-indigo-500">{jobs.length}</Badge>}
-        <JobApplicationDialog category={category} onClose={onJobAdd}>
+        <JobApplicationDialog category={id} onClose={onJobAdd}>
           <Plus className="absolute right-0 top-1/2 aspect-square h-10 w-10 -translate-y-1/2 cursor-pointer p-2.5 text-muted-foreground hover:text-card-foreground" />
         </JobApplicationDialog>
       </header>

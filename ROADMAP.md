@@ -33,7 +33,7 @@ This document outlines the development plans for Rise2Role. This is a living doc
   - [x] Load saved data on startup
   - [ ] Handle data persistence
 - [ ] Add basic error handling
-- [ ] Ensure mobile responsiveness
+- [x] Ensure mobile responsiveness
 
 ### 🔗 Phase 2: Shareable Boards
 

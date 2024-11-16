@@ -8,16 +8,7 @@ export const initializeBoard = (jobs: JobApplication[]): KanbanBoardSections => 
     [KanbanCategory.DECISION]: []
   };
 
-  jobs.forEach((job) => boardSections[job.category].push(job));
+  jobs.forEach((job) => boardSections[job.category]?.push(job));
 
   return boardSections;
 };
-
-// export const findBoardSectionContainer = (boardSections: BoardSections, id: string) => {
-//   if (id in boardSections) {
-//     return id;
-//   }
-
-//   const container = Object.keys(boardSections).find((key) => boardSections[key].find((item) => item.id === id));
-//   return container;
-// };

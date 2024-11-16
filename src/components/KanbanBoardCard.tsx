@@ -68,9 +68,10 @@ export function KanbanBoardCard({ job, color = 'red', onJobEdit }: { job: JobApp
               <CardDescription>{`${job.company.name} / ${job.company.size} / ${job.company.industry}`}</CardDescription>
             </CardHeader>
             <CardContent>
-              <CardDescription>{[job?.onSite && 'On-site', job?.hybrid && 'Hyybrid', job?.remote && 'Remote'].filter(Boolean).join(' / ')}</CardDescription>
+              <CardDescription>{[job?.onSite && 'On-site', job?.hybrid && 'Hybrid', job?.remote && 'Remote'].filter(Boolean).join(' / ')}</CardDescription>
               <CardDescription>
-                <span className={`${textColors[color]} font-medium`}>{job.skills[0]}</span> &#x2022; {job.skills.slice(1, 3).join(' \u2022 ')}
+                <span className={`${textColors[color]} font-medium`}>{job.skills[0]}</span>
+                {job.skills.slice(1, 3).length > 0 && <> &#x2022; {job.skills.slice(1, 3).join(' \u2022 ')}</>}
               </CardDescription>
             </CardContent>
           </div>
