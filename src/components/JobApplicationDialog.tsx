@@ -90,7 +90,7 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
 
   React.useEffect(() => {
     if (category) form.setValue('category', category);
-  }, [category]);
+  }, [category, form]);
 
   const handleWorkModelChange = React.useCallback(
     (model: WorkModel, checked: boolean) => {
@@ -106,7 +106,7 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
     const { name, size, industry } = company;
 
     const newJobApplication: JobApplication = {
-      id: uuidv4(),
+      id: job ? job.id : uuidv4(),
       role,
       company: {
         name,
@@ -140,8 +140,8 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <DialogHeader>
-              <DialogTitle>Add Job Application</DialogTitle>
-              <DialogDescription>Add a new job application to track.</DialogDescription>
+              <DialogTitle>{job ? 'Edit' : 'Add'} job application</DialogTitle>
+              <DialogDescription>{job ? 'Edit an existing job application.' : 'Add a new job application to track.'} </DialogDescription>
             </DialogHeader>
 
             <div className="grid grid-cols-1 gap-4 py-4">
@@ -412,7 +412,7 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
             </div>
 
             <DialogFooter>
-              <Button type="submit">Add application</Button>
+              <Button type="submit">{job ? 'Edit' : 'Add'} application</Button>
             </DialogFooter>
           </form>
         </Form>

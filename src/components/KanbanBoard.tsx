@@ -1,41 +1,23 @@
-import { INITIAL_JOBS } from '@/data';
 import { JobApplication, KanbanBoardSections, KanbanCategory } from '@/types';
 import { initializeBoard } from '@/utils/kanban';
-import {
-  closestCorners,
-  defaultDropAnimation,
-  DndContext,
-  DragEndEvent,
-  DragOverEvent,
-  DragOverlay,
-  DragStartEvent,
-  DropAnimation,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors
-} from '@dnd-kit/core';
-import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { closestCorners, defaultDropAnimation, DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, DropAnimation, MouseSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove } from '@dnd-kit/sortable';
 import { useEffect, useState } from 'react';
 import { KanbanBoardCard } from './KanbanBoardCard';
 import { KanbanBoardColumn } from './KanbanBoardColumn';
 
 export function KanbanBoard() {
-  const [jobs, setJobs] = useState<JobApplication[]>(INITIAL_JOBS);
+  const [jobs, setJobs] = useState<JobApplication[]>(JSON.parse(localStorage.getItem('rise2role.jobs')!) ?? []);
   const [kanbanBoardSections, setKanbanBoardSections] = useState<KanbanBoardSections>(initializeBoard(jobs));
 
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
 
   useEffect(() => {
+    localStorage.setItem('rise2role.jobs', JSON.stringify(jobs));
     setKanbanBoardSections(initializeBoard(jobs));
   }, [jobs]);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates
-    })
-  );
+  const sensors = useSensors(useSensor(MouseSensor, { activationConstraint: { distance: 20 } }));
 
   function findBoardSectionContainer(boardSections: KanbanBoardSections, id: string): KanbanCategory {
     if (id in boardSections) {
@@ -119,25 +101,10 @@ export function KanbanBoard() {
             color="gray"
             jobs={kanbanBoardSections[category as KanbanCategory]}
             onJobAdd={(job) => setJobs((prevJobs) => [...prevJobs, job])}
+            onJobEdit={(job) => setJobs((prevJobs) => prevJobs.map((prevJob) => (prevJob.id === job.id ? job : prevJob)))}
           ></KanbanBoardColumn>
         ))}
-        <DragOverlay dropAnimation={dropAnimation}>
-          {activeJob ? (
-            <KanbanBoardCard
-              {...activeJob}
-              companyInformation={`${activeJob.company.name} / ${activeJob.company.size} / ${activeJob.company.industry}`}
-              locationInformation={[activeJob?.onSite && 'On-site', activeJob?.hybrid && 'Hybrid', activeJob?.remote && 'Remote'].filter(Boolean).join(' / ')}
-              status={
-                activeJob.category === KanbanCategory.INTERVIEW && 'status' in activeJob && typeof activeJob.status === 'object'
-                  ? `Round ${activeJob.status.round} ${activeJob.status.description ? `(${activeJob.status.description})` : ''}`
-                  : activeJob.category === KanbanCategory.DECISION && 'status' in activeJob && typeof activeJob.status === 'string'
-                    ? activeJob.status
-                    : ''
-              }
-              color="gray"
-            />
-          ) : null}
-        </DragOverlay>
+        <DragOverlay dropAnimation={dropAnimation}>{activeJob ? <KanbanBoardCard job={activeJob} color="gray" /> : null}</DragOverlay>
       </DndContext>
     </div>
   );

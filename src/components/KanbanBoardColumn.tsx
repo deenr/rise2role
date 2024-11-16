@@ -13,7 +13,8 @@ export function KanbanBoardColumn({
   jobs,
   color = 'gray',
   className,
-  onJobAdd
+  onJobAdd,
+  onJobEdit
 }: {
   id: string;
   title: string;
@@ -22,6 +23,7 @@ export function KanbanBoardColumn({
   color: 'gray' | 'blue' | 'fuchsia' | 'amber';
   className?: string;
   onJobAdd: (job: JobApplication) => void;
+  onJobEdit: (job: JobApplication) => void;
 }) {
   const { setNodeRef } = useDroppable({
     id
@@ -39,20 +41,7 @@ export function KanbanBoardColumn({
       <SortableContext id={id} items={jobs} strategy={verticalListSortingStrategy}>
         <section className="flex h-full flex-col gap-2 rounded-lg border bg-muted p-2" ref={setNodeRef}>
           {jobs.map((job) => (
-            <KanbanBoardCard
-              key={job.id}
-              {...job}
-              companyInformation={`${job.company.name} / ${job.company.size} / ${job.company.industry}`}
-              locationInformation={[job?.onSite && 'On-site', job?.hybrid && 'Hybrid', job?.remote && 'Remote'].filter(Boolean).join(' / ')}
-              status={
-                category === KanbanCategory.INTERVIEW && 'status' in job && typeof job.status === 'object'
-                  ? `Round ${job.status.round} ${job.status.description ? `(${job.status.description})` : ''}`
-                  : category === KanbanCategory.DECISION && 'status' in job && typeof job.status === 'string'
-                    ? job.status
-                    : ''
-              }
-              color={color}
-            />
+            <KanbanBoardCard key={job.id} job={job} color={color} onJobEdit={onJobEdit} />
           ))}
         </section>
       </SortableContext>
