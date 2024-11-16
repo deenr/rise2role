@@ -1,3 +1,4 @@
+import { INITIAL_JOBS } from '@/data';
 import { JobApplication, KanbanBoardSections, KanbanCategory } from '@/types';
 import { initializeBoard } from '@/utils/kanban';
 import { closestCorners, defaultDropAnimation, DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, DropAnimation, MouseSensor, useSensor, useSensors } from '@dnd-kit/core';
@@ -6,14 +7,22 @@ import { useEffect, useState } from 'react';
 import { KanbanBoardCard } from './KanbanBoardCard';
 import { KanbanBoardColumn } from './KanbanBoardColumn';
 
-export function KanbanBoard() {
-  const [jobs, setJobs] = useState<JobApplication[]>(JSON.parse(localStorage.getItem('rise2role.jobs')!) ?? []);
+export function KanbanBoard({ className, isPreview }: { className?: string; isPreview: boolean }) {
+  const [jobs, setJobs] = useState<JobApplication[]>([]);
   const [kanbanBoardSections, setKanbanBoardSections] = useState<KanbanBoardSections>(initializeBoard(jobs));
 
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
 
   useEffect(() => {
-    localStorage.setItem('rise2role.jobs', JSON.stringify(jobs));
+    if (isPreview) {
+      setJobs(INITIAL_JOBS);
+    } else {
+      const storedJobs = JSON.parse(localStorage.getItem('rise2role.jobs')!) ?? [];
+      setJobs(storedJobs);
+    }
+  }, [isPreview]);
+
+  useEffect(() => {
     setKanbanBoardSections(initializeBoard(jobs));
   }, [jobs]);
 
@@ -90,7 +99,7 @@ export function KanbanBoard() {
   const activeJob = jobs.find(({ id }) => id === activeJobId);
 
   return (
-    <div className="grid h-dvh grid-cols-[auto,auto,auto,auto] gap-4 p-6">
+    <div className={`grid grid-cols-[auto,auto,auto,auto] gap-4 ${className}`}>
       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
         {Object.keys(kanbanBoardSections).map((category) => (
           <KanbanBoardColumn
