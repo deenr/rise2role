@@ -7,7 +7,7 @@ function App() {
   const isPreview = location.pathname.includes('preview');
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background">
+    <div className="flex h-dvh min-h-dvh flex-col bg-background">
       <header className="fixed top-0 z-50 w-full border-b bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:relative md:border-b-0">
         <div className="flex h-16 items-center justify-between px-4 sm:px-6">
           <Link to={'/'} className="w-fit">
@@ -27,18 +27,16 @@ function App() {
         </div>
       </header>
 
-      <KanbanBoard className="h-full flex-1 px-4 pt-[80px] sm:px-6 md:pt-0" isPreview={isPreview} />
+      <KanbanBoard className="flex-1 px-4 pt-[80px] sm:px-6 md:pt-0" isPreview={isPreview} />
 
-      <footer className="w-full">
-        <div className="flex h-14 items-center px-4 sm:px-6">
-          <p className="text-sm text-muted-foreground">
-            ©2024 &#8212; Click{' '}
-            <Link className="text-indigo-500 underline" to={'/preview'}>
-              here
-            </Link>{' '}
-            to view a preview
-          </p>
-        </div>
+      <footer className="flex min-h-14 w-full items-center px-4 sm:px-6">
+        <p className="text-sm text-muted-foreground">
+          ©2024 &#8212; Click{' '}
+          <Link className="text-indigo-500 underline" to={'/preview'}>
+            here
+          </Link>{' '}
+          to view a preview
+        </p>
       </footer>
     </div>
   );

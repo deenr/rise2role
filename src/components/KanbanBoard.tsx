@@ -98,6 +98,13 @@ export function KanbanBoard({ className, isPreview }: { className?: string; isPr
 
   const activeJob = jobs.find(({ id }) => id === activeJobId);
 
+  const KANBAN_CATEGORIES = {
+    [KanbanCategory.INTERESTED]: 'gray',
+    [KanbanCategory.APPLIED]: 'blue',
+    [KanbanCategory.INTERVIEW]: 'fuchsia',
+    [KanbanCategory.DECISION]: 'amber'
+  } as const;
+
   return (
     <div className={`grid grid-cols-[auto,auto,auto,auto] gap-4 ${className}`}>
       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
@@ -106,7 +113,7 @@ export function KanbanBoard({ className, isPreview }: { className?: string; isPr
             className="min-w-64"
             id={category as KanbanCategory}
             key={category}
-            color="gray"
+            color={KANBAN_CATEGORIES[category as KanbanCategory]}
             jobs={kanbanBoardSections[category as KanbanCategory]}
             onJobAdd={(job) => setJobs((prevJobs) => [...prevJobs, job])}
             onJobEdit={(job) => setJobs((prevJobs) => prevJobs.map((prevJob) => (prevJob.id === job.id ? job : prevJob)))}
