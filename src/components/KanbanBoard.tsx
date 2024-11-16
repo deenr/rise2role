@@ -1,3 +1,4 @@
+import { INITIAL_JOBS } from '@/data';
 import { JobApplication, KanbanBoardSections, KanbanCategory } from '@/types';
 import { initializeBoard } from '@/utils/kanban';
 import {
@@ -20,7 +21,7 @@ import { KanbanBoardCard } from './KanbanBoardCard';
 import { KanbanBoardColumn } from './KanbanBoardColumn';
 
 export function KanbanBoard() {
-  const [jobs, setJobs] = useState<JobApplication[]>([]);
+  const [jobs, setJobs] = useState<JobApplication[]>(INITIAL_JOBS);
   const [kanbanBoardSections, setKanbanBoardSections] = useState<KanbanBoardSections>(initializeBoard(jobs));
 
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
@@ -88,11 +89,6 @@ export function KanbanBoard() {
     const activeIndex = kanbanBoardSections[activeContainer].findIndex((task) => task.id === active.id);
     const overIndex = kanbanBoardSections[overContainer].findIndex((task) => task.id === over?.id);
 
-    setKanbanBoardSections((prevBoardSections) => {
-      prevBoardSections[activeContainer].map((task) => (task.id === active.id ? { ...task, category: overContainer } : task));
-
-      return prevBoardSections;
-    });
     setJobs((prevJobs) => prevJobs.map((task) => (task.id === active.id ? { ...task, category: overContainer } : task)));
 
     if (activeIndex !== overIndex) {

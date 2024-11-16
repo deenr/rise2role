@@ -57,27 +57,34 @@ interface JobApplicationDialogProps {
   category?: KanbanCategory;
   children: JSX.Element;
   onClose: (job: JobApplication) => void;
+  job?: JobApplication;
 }
 
-export function JobApplicationDialog({ category, children, onClose }: JobApplicationDialogProps) {
+export function JobApplicationDialog({ category, children, onClose, job }: JobApplicationDialogProps) {
   const [open, setOpen] = useState(false);
 
   const form = useForm<JobApplicationFormData>({
     resolver: zodResolver(jobApplicationSchema),
     defaultValues: {
-      role: '',
-      company: {
+      role: job?.role ?? '',
+      company: job?.company ?? {
         name: '',
         size: '',
         industry: ''
       },
-      location: '',
-      interviewStatus: {
-        round: '',
-        type: ''
-      },
-      workModels: [],
-      skills: []
+      location: job?.location ?? '',
+      interviewStatus:
+        job && job.status && typeof job.status === 'object'
+          ? {
+              round: job.status.round.toString(),
+              type: job.status.description
+            }
+          : {
+              round: '',
+              type: ''
+            },
+      workModels: job ? [`${job.onSite}`, `${job.hybrid}`, `${job.remote}`] : [],
+      skills: job ? job.skills : []
     }
   });
 
@@ -94,7 +101,8 @@ export function JobApplicationDialog({ category, children, onClose }: JobApplica
   );
 
   const onSubmit = (data: JobApplicationFormData) => {
-    const { role, company, skills, location, workModels, category, decisionStatus, interviewStatus, percentage } = data;
+    // const { role, company, skills, location, workModels, category, decisionStatus, interviewStatus, percentage } = data;
+    const { role, company, skills, location, workModels, category, percentage } = data;
     const { name, size, industry } = company;
 
     const newJobApplication: JobApplication = {

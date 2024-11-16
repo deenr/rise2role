@@ -1,8 +1,9 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { KanbanCategory, KanbanDecisionStatus } from '@/types';
+import { JobApplication, KanbanCategory, KanbanDecisionStatus } from '@/types';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { JobApplicationDialog } from './JobApplicationDialog';
 
 export function KanbanBoardCard({
   id,
@@ -11,8 +12,8 @@ export function KanbanBoardCard({
   locationInformation,
   skills,
   color = 'red',
-  category,
   status
+  // category,
   // percentage
 }: {
   id: string;
@@ -75,25 +76,31 @@ export function KanbanBoardCard({
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <Card className={`w-full rounded-md ${isDragging ? 'border-dashed opacity-80' : ''}`}>
-        <div className={`${isDragging ? 'invisible' : 'visible'}`}>
-          <CardHeader>
-            {status && <Badge className={`w-fit ${getHeaderBadgeColor()}`}>{status}</Badge>}
-            <CardTitle>{role}</CardTitle>
-            <CardDescription>{companyInformation}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <CardDescription>{locationInformation}</CardDescription>
-            <CardDescription>
-              <span className={`${textColors[color]} font-medium`}>{skills[0]}</span> &#x2022; {skills.slice(1, 3).join(' \u2022 ')}
-            </CardDescription>
-          </CardContent>
-          {/* <CardFooter className="flex justify-end border-t pt-3">
+    <JobApplicationDialog
+      onClose={function (job: JobApplication): void {
+        console.log(job);
+      }}
+    >
+      <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+        <Card className={`w-full rounded-md ${isDragging ? 'border-dashed opacity-80' : ''}`}>
+          <div className={`${isDragging ? 'invisible' : 'visible'}`}>
+            <CardHeader>
+              {status && <Badge className={`w-fit ${getHeaderBadgeColor()}`}>{status}</Badge>}
+              <CardTitle>{role}</CardTitle>
+              <CardDescription>{companyInformation}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CardDescription>{locationInformation}</CardDescription>
+              <CardDescription>
+                <span className={`${textColors[color]} font-medium`}>{skills[0]}</span> &#x2022; {skills.slice(1, 3).join(' \u2022 ')}
+              </CardDescription>
+            </CardContent>
+            {/* <CardFooter className="flex justify-end border-t pt-3">
         <Badge className={getPercentageBadgeColor()}>{percentage ? `${percentage}%` : <Loader className="h-4 animate-spin" />}</Badge>
         </CardFooter> */}
-        </div>
-      </Card>
-    </div>
+          </div>
+        </Card>
+      </div>
+    </JobApplicationDialog>
   );
 }
