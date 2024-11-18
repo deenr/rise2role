@@ -7,8 +7,20 @@ import { useEffect, useState } from 'react';
 import { KanbanBoardCard } from './KanbanBoardCard';
 import { KanbanBoardColumn } from './KanbanBoardColumn';
 
+const LOCAL_STORAGE_JOBS_KEY = 'rise2role.jobs';
+
 export function KanbanBoard({ className, isPreview }: { className?: string; isPreview: boolean }) {
-  const [jobs, setJobs] = useState<JobApplication[]>([]);
+  const [jobs, setJobs] = useState<JobApplication[]>(() => {
+    if (isPreview) {
+      return INITIAL_JOBS;
+    }
+    try {
+      const storedJobs = localStorage.getItem(LOCAL_STORAGE_JOBS_KEY);
+      return storedJobs ? JSON.parse(storedJobs) : [];
+    } catch {
+      return [];
+    }
+  });
   const [kanbanBoardSections, setKanbanBoardSections] = useState<KanbanBoardSections>(initializeBoard(jobs));
 
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
@@ -17,12 +29,17 @@ export function KanbanBoard({ className, isPreview }: { className?: string; isPr
     if (isPreview) {
       setJobs(INITIAL_JOBS);
     } else {
-      const storedJobs = JSON.parse(localStorage.getItem('rise2role.jobs')!) ?? [];
-      setJobs(storedJobs);
+      try {
+        const storedJobs = localStorage.getItem(LOCAL_STORAGE_JOBS_KEY);
+        setJobs(storedJobs ? JSON.parse(storedJobs) : []);
+      } catch {
+        setJobs([]);
+      }
     }
   }, [isPreview]);
 
   useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_JOBS_KEY, JSON.stringify(jobs));
     setKanbanBoardSections(initializeBoard(jobs));
   }, [jobs]);
 
