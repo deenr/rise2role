@@ -27,6 +27,7 @@ export interface BaseJobApplication {
   hybrid: boolean;
   remote: boolean;
   skills: string[];
+  url?: string;
   percentage?: number;
 }
 

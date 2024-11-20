@@ -34,6 +34,7 @@ const jobApplicationSchema = z.object({
     size: z.string(),
     industry: z.string()
   }),
+  url: z.string().url(),
   location: z.string().min(1, 'Location is required'),
   workModels: z.array(z.string()),
   skills: z.array(z.string()).min(1, 'At least one skill is required').max(3, 'Maximum 3 skills are allowed'),
@@ -84,7 +85,8 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
               type: ''
             },
       workModels: job ? [`${job.onSite}`, `${job.hybrid}`, `${job.remote}`] : [],
-      skills: job ? job.skills : []
+      skills: job ? job.skills : [],
+      url: job?.url ?? ''
     }
   });
 
@@ -101,10 +103,10 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
   );
 
   const onSubmit = (data: JobApplicationFormData) => {
-    const { role, company, skills, location, workModels, category, decisionStatus, interviewStatus, percentage } = data;
+    const { role, company, skills, location, workModels, category, decisionStatus, interviewStatus, percentage, url } = data;
     const { name, size, industry } = company;
 
-    const newJobApplication: JobApplication = {
+    const jobApplication: JobApplication = {
       id: job ? job.id : uuidv4(),
       role,
       company: {
@@ -113,6 +115,7 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
         industry
       },
       location,
+      url,
       onSite: workModels.includes('On-site'),
       hybrid: workModels.includes('Hybrid'),
       remote: workModels.includes('Remote'),
@@ -125,11 +128,11 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
     form.reset();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (category === KanbanCategory.INTERVIEW && interviewStatus) (newJobApplication as any)['status'] = { round: Number(interviewStatus.round), description: interviewStatus.type };
+    if (category === KanbanCategory.INTERVIEW && interviewStatus) (jobApplication as any)['status'] = { round: Number(interviewStatus.round), description: interviewStatus.type };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (category === KanbanCategory.DECISION) (newJobApplication as any)['status'] = decisionStatus;
+    if (category === KanbanCategory.DECISION) (jobApplication as any)['status'] = decisionStatus;
 
-    onClose(newJobApplication);
+    onClose(jobApplication);
     setOpen(false);
   };
 
@@ -408,10 +411,23 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="url"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Link</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
 
-            <DialogFooter className="mt-6 md:mt-0">
+            <DialogFooter className="mt-6">
               <Button type="submit">{job ? 'Edit' : 'Add'} application</Button>
             </DialogFooter>
           </form>
