@@ -34,7 +34,7 @@ const jobApplicationSchema = z.object({
     size: z.string(),
     industry: z.string()
   }),
-  url: z.string().url(),
+  url: z.string().url().optional().or(z.literal('')),
   location: z.string().min(1, 'Location is required'),
   workModels: z.array(z.string()),
   skills: z.array(z.string()).min(1, 'At least one skill is required').max(3, 'Maximum 3 skills are allowed'),
@@ -67,13 +67,13 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
   const form = useForm<JobApplicationFormData>({
     resolver: zodResolver(jobApplicationSchema),
     defaultValues: {
-      role: job?.role ?? '',
+      role: job?.role ?? undefined,
       company: job?.company ?? {
-        name: '',
-        size: '',
-        industry: ''
+        name: undefined,
+        size: undefined,
+        industry: undefined
       },
-      location: job?.location ?? '',
+      location: job?.location ?? undefined,
       interviewStatus:
         job && job.status && typeof job.status === 'object'
           ? {
@@ -81,12 +81,12 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
               type: job.status.description
             }
           : {
-              round: '',
-              type: ''
+              round: undefined,
+              type: undefined
             },
       workModels: job ? [`${job.onSite}`, `${job.hybrid}`, `${job.remote}`] : [],
       skills: job ? job.skills : [],
-      url: job?.url ?? ''
+      url: job?.url ?? undefined
     }
   });
 
