@@ -39,7 +39,7 @@ export function KanbanBoard({ className, isPreview }: { className?: string; isPr
   }, [isPreview]);
 
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_JOBS_KEY, JSON.stringify(jobs));
+    if (!isPreview) localStorage.setItem(LOCAL_STORAGE_JOBS_KEY, JSON.stringify(jobs));
     setKanbanBoardSections(initializeBoard(jobs));
   }, [jobs]);
 
