@@ -97,7 +97,24 @@ export function KanbanBoard({ className, isPreview }: { className?: string; isPr
     const activeIndex = kanbanBoardSections[activeContainer].findIndex((task) => task.id === active.id);
     const overIndex = kanbanBoardSections[overContainer].findIndex((task) => task.id === over?.id);
 
-    setJobs((prevJobs) => prevJobs.map((task) => (task.id === active.id ? { ...task, category: overContainer } : task)));
+    setJobs((prevJobs) => {
+      const updatedJobs = [...prevJobs];
+
+      const updatedTaskIndex = updatedJobs.findIndex((task) => task.id === active.id);
+      if (updatedTaskIndex !== -1) {
+        updatedJobs[updatedTaskIndex] = {
+          ...updatedJobs[updatedTaskIndex],
+          category: overContainer
+        };
+      }
+
+      if (activeIndex !== overIndex) {
+        const [movedTask] = updatedJobs.splice(updatedTaskIndex, 1);
+        updatedJobs.splice(overIndex, 0, movedTask);
+      }
+
+      return updatedJobs;
+    });
 
     if (activeIndex !== overIndex) {
       setKanbanBoardSections((prevBoardSections) => ({
