@@ -2,9 +2,8 @@ import { cn } from '@/lib/utils';
 import { JobApplication, KanbanCategory, KanbanDecisionStatus } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
-import * as React from 'react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useForm, UseFormReturn } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { Button } from './ui/button';
@@ -28,25 +27,22 @@ const DECISION_STATUSES = {
 };
 
 const jobApplicationSchema = z.object({
-  role: z.string().min(1, 'Job title is required'),
-  company: z.object({
-    name: z.string().min(1, 'Company name is required'),
-    size: z.string(),
-    industry: z.string()
-  }),
-  url: z.string().url().optional().or(z.literal('')),
-  location: z.string().min(1, 'Location is required'),
-  workModels: z.array(z.string()),
-  skills: z.array(z.string()).min(1, 'At least one skill is required').max(3, 'Maximum 3 skills are allowed'),
   category: z.nativeEnum(KanbanCategory),
+  role: z.string().min(1, 'Job title is required'),
+  companyName: z.string().min(1, 'Company name is required'),
+  companySize: z.string().optional(),
+  companyIndustry: z.string().optional(),
+  jobLink: z.string().url().optional().or(z.literal('')),
+  location: z.string().optional(),
+  workModels: z.array(z.string()),
+  skills: z.array(z.string()).max(3, 'Maximum 3 skills are allowed'),
   decisionStatus: z.nativeEnum(KanbanDecisionStatus).optional(),
   interviewStatus: z
     .object({
-      round: z.string(),
-      type: z.string()
+      round: z.string().optional(),
+      type: z.string().optional()
     })
-    .optional(),
-  percentage: z.number().min(0).max(100).optional()
+    .optional()
 });
 
 type JobApplicationFormData = z.infer<typeof jobApplicationSchema>;
@@ -64,37 +60,39 @@ interface JobApplicationDialogProps {
 export function JobApplicationDialog({ category, children, onClose, job }: JobApplicationDialogProps) {
   const [open, setOpen] = useState(false);
 
-  const form = useForm<JobApplicationFormData>({
+  const form: UseFormReturn<JobApplicationFormData> = useForm<JobApplicationFormData>({
     resolver: zodResolver(jobApplicationSchema),
-    defaultValues: {
-      role: job?.role ?? undefined,
-      company: job?.company ?? {
-        name: undefined,
-        size: undefined,
-        industry: undefined
-      },
-      location: job?.location ?? undefined,
-      interviewStatus:
-        job && job.status && typeof job.status === 'object'
-          ? {
-              round: job.status.round.toString(),
-              type: job.status.description
-            }
-          : {
-              round: undefined,
-              type: undefined
-            },
-      workModels: job ? [`${job.onSite}`, `${job.hybrid}`, `${job.remote}`] : [],
-      skills: job ? job.skills : [],
-      url: job?.url ?? undefined
-    }
+    defaultValues: useMemo(() => {
+      return {
+        category: category,
+        role: job?.role ?? '',
+        companyName: job?.company?.name ?? '',
+        companySize: job?.company?.size ?? '',
+        companyIndustry: job?.company?.industry ?? '',
+        location: job?.location ?? '',
+        interviewStatus:
+          job?.status && typeof job.status === 'object'
+            ? {
+                round: job.status.round?.toString() ?? '',
+                type: job.status.description ?? ''
+              }
+            : {
+                round: '',
+                type: ''
+              },
+        workModels: [job?.onSite ? 'On-site' : null, job?.hybrid ? 'Hybrid' : null, job?.remote ? 'Remote' : null].filter(Boolean) as WorkModel[],
+        skills: job?.skills ?? [],
+        jobLink: job?.url ?? '',
+        decisionStatus: job?.status as KanbanDecisionStatus
+      };
+    }, [job, category])
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (category) form.setValue('category', category);
   }, [category, form]);
 
-  const handleWorkModelChange = React.useCallback(
+  const handleWorkModelChange = useCallback(
     (model: WorkModel, checked: boolean) => {
       const currentLocations = form.getValues('workModels');
       form.setValue('workModels', checked ? [...currentLocations, model] : currentLocations.filter((loc) => loc !== model));
@@ -103,26 +101,24 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
   );
 
   const onSubmit = (data: JobApplicationFormData) => {
-    const { role, company, skills, location, workModels, category, decisionStatus, interviewStatus, percentage, url } = data;
-    const { name, size, industry } = company;
+    const { role, companyName, companySize, companyIndustry, skills, location, workModels, category, decisionStatus, interviewStatus, jobLink } = data;
 
     const jobApplication: JobApplication = {
       id: job ? job.id : uuidv4(),
       role,
       company: {
-        name,
-        size,
-        industry
+        name: companyName,
+        ...(companySize ? { size: companySize } : {}),
+        ...(companyIndustry ? { industry: companyIndustry } : {})
       },
       location,
-      url,
+      url: jobLink,
       onSite: workModels.includes('On-site'),
       hybrid: workModels.includes('Hybrid'),
       remote: workModels.includes('Remote'),
       status: undefined,
       skills,
-      category,
-      percentage
+      category
     };
 
     form.reset();
@@ -269,7 +265,7 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
 
                 <FormField
                   control={form.control}
-                  name="company.name"
+                  name="companyName"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Company name</FormLabel>
@@ -285,7 +281,7 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField
                   control={form.control}
-                  name="company.size"
+                  name="companySize"
                   render={({ field, fieldState }) => (
                     <FormItem>
                       <FormLabel>Company size</FormLabel>
@@ -298,7 +294,7 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
                 />
                 <FormField
                   control={form.control}
-                  name="company.industry"
+                  name="companyIndustry"
                   render={({ field, fieldState }) => (
                     <FormItem>
                       <FormLabel>Industry</FormLabel>
@@ -413,7 +409,7 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
                 />
                 <FormField
                   control={form.control}
-                  name="url"
+                  name="jobLink"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Link</FormLabel>

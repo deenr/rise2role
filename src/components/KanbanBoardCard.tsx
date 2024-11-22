@@ -65,15 +65,19 @@ export function KanbanBoardCard({ job, color = 'red', onJobEdit }: { job: JobApp
             <CardHeader>
               {statusText && <Badge className={`w-fit ${getHeaderBadgeColor()}`}>{statusText}</Badge>}
               <CardTitle>{job.role}</CardTitle>
-              <CardDescription>{`${job.company.name} / ${job.company.size} / ${job.company.industry}`}</CardDescription>
+              <CardDescription>{`${job.company.name}${job.company.size ? ` / ${job.company.size}` : ''}${job.company.industry ? ` / ${job.company.industry}` : ''}`}</CardDescription>
             </CardHeader>
-            <CardContent>
-              <CardDescription>{[job?.onSite && 'On-site', job?.hybrid && 'Hybrid', job?.remote && 'Remote'].filter(Boolean).join(' / ')}</CardDescription>
-              <CardDescription>
-                <span className={`${textColors[color]} font-medium`}>{job.skills[0]}</span>
-                {job.skills.slice(1, 3).length > 0 && <> &#x2022; {job.skills.slice(1, 3).join(' \u2022 ')}</>}
-              </CardDescription>
-            </CardContent>
+            {(job?.onSite || job?.hybrid || job?.remote || (job?.skills && job?.skills?.length > 0)) && (
+              <CardContent>
+                <CardDescription>{[job?.onSite && 'On-site', job?.hybrid && 'Hybrid', job?.remote && 'Remote'].filter(Boolean).join(' / ')}</CardDescription>
+                {job?.skills && job?.skills?.length > 0 && (
+                  <CardDescription>
+                    <span className={`${textColors[color]} font-medium`}>{job.skills[0]}</span>
+                    {job.skills.slice(1, 3).length > 0 && <> &#x2022; {job.skills.slice(1, 3).join(' \u2022 ')}</>}
+                  </CardDescription>
+                )}
+              </CardContent>
+            )}
           </div>
         </Card>
       </div>

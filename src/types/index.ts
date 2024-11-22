@@ -19,14 +19,14 @@ export interface BaseJobApplication {
   category: KanbanCategory;
   company: {
     name: string;
-    size: string;
-    industry: string;
+    size?: string;
+    industry?: string;
   };
-  location: string;
-  onSite: boolean;
-  hybrid: boolean;
-  remote: boolean;
-  skills: string[];
+  location?: string;
+  onSite?: boolean;
+  hybrid?: boolean;
+  remote?: boolean;
+  skills?: string[];
   url?: string;
   percentage?: number;
 }
