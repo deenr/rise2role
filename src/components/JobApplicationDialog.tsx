@@ -397,6 +397,15 @@ export function JobApplicationDialog({ category, children, onClose, job }: JobAp
                                   }
                                 }
                               }}
+                              onBlur={(e) => {
+                                e.preventDefault();
+                                const skill = e.currentTarget.value.trim();
+                                if (skill && (!field.value || field.value.length < 3)) {
+                                  const newSkills = [...(field.value || []), skill];
+                                  field.onChange(newSkills);
+                                  e.currentTarget.value = '';
+                                }
+                              }}
                             />
                           </div>
                         </div>
